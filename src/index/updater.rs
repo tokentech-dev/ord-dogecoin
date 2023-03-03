@@ -405,6 +405,10 @@ impl Updater {
     let mut inscription_id_to_inscription_entry =
       wtx.open_table(INSCRIPTION_ID_TO_INSCRIPTION_ENTRY)?;
     let mut inscription_id_to_satpoint = wtx.open_table(INSCRIPTION_ID_TO_SATPOINT)?;
+    let mut inscription_id_to_txids = wtx.open_table(INSCRIPTION_ID_TO_TXIDS)?;
+    let mut inscription_txid_to_tx = wtx.open_table(INSCRIPTION_TXID_TO_TX)?;
+    let mut partial_txid_to_inscription_txids =
+      wtx.open_table(PARTIAL_TXID_TO_INSCRIPTION_TXIDS)?;
     let mut inscription_number_to_inscription_id =
       wtx.open_table(INSCRIPTION_NUMBER_TO_INSCRIPTION_ID)?;
     let mut sat_to_inscription_id = wtx.open_table(SAT_TO_INSCRIPTION_ID)?;
@@ -419,6 +423,9 @@ impl Updater {
     let mut inscription_updater = InscriptionUpdater::new(
       self.height,
       &mut inscription_id_to_satpoint,
+      &mut inscription_id_to_txids,
+      &mut inscription_txid_to_tx,
+      &mut partial_txid_to_inscription_txids,
       value_receiver,
       &mut inscription_id_to_inscription_entry,
       lost_sats,
@@ -439,7 +446,7 @@ impl Updater {
       let h = Height(self.height);
       if h.subsidy() > 0 {
         let start = h.starting_sat();
-        coinbase_inputs.push_front((start.n(), (start + h.subsidy()).n()));
+        coinbase_inputs.push_front((start.n(), (start + h.subsidy() as u128).n()));
         self.sat_ranges_since_flush += 1;
       }
 
@@ -463,7 +470,7 @@ impl Updater {
               .to_vec(),
           };
 
-          for chunk in sat_ranges.chunks_exact(11) {
+          for chunk in sat_ranges.chunks_exact(24) {
             input_sat_ranges.push_back(SatRange::load(chunk.try_into().unwrap()));
           }
         }
@@ -513,7 +520,7 @@ impl Updater {
 
           lost_sat_ranges.extend_from_slice(&(start, end).store());
 
-          lost_sats += end - start;
+          lost_sats += u64::try_from(end - start).unwrap();
         }
 
         outpoint_to_sat_ranges.insert(&OutPoint::null().store(), lost_sat_ranges.as_slice())?;
@@ -543,8 +550,8 @@ impl Updater {
     &mut self,
     tx: &Transaction,
     txid: Txid,
-    sat_to_satpoint: &mut Table<u64, &SatPointValue>,
-    input_sat_ranges: &mut VecDeque<(u64, u64)>,
+    sat_to_satpoint: &mut Table<u128, &SatPointValue>,
+    input_sat_ranges: &mut VecDeque<(u128, u128)>,
     sat_ranges_written: &mut u64,
     outputs_traversed: &mut u64,
     inscription_updater: &mut InscriptionUpdater,
@@ -575,11 +582,11 @@ impl Updater {
           )?;
         }
 
-        let count = range.1 - range.0;
+        let count = u64::try_from(range.1 - range.0).unwrap();
 
         let assigned = if count > remaining {
           self.sat_ranges_since_flush += 1;
-          let middle = range.0 + remaining;
+          let middle = range.0 + remaining as u128;
           input_sat_ranges.push_front((middle, range.1));
           (range.0, middle)
         } else {
@@ -588,7 +595,7 @@ impl Updater {
 
         sats.extend_from_slice(&assigned.store());
 
-        remaining -= assigned.1 - assigned.0;
+        remaining -= u64::try_from(assigned.1 - assigned.0).unwrap();
 
         *sat_ranges_written += 1;
       }

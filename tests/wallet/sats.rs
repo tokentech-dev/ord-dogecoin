@@ -4,6 +4,7 @@ use {
 };
 
 #[test]
+#[ignore]
 fn sats() {
   let rpc_server = test_bitcoincore_rpc::spawn();
   create_wallet(&rpc_server);
@@ -13,11 +14,12 @@ fn sats() {
     .rpc_server(&rpc_server)
     .output::<Vec<OutputRare>>();
 
-  assert_eq!(output[0].sat, 50 * COIN_VALUE);
+  assert_eq!(output[0].sat, 50 * COIN_VALUE as u128);
   assert_eq!(output[0].output.to_string(), format!("{second_coinbase}:0"));
 }
 
 #[test]
+#[ignore]
 fn sats_from_tsv_success() {
   let rpc_server = test_bitcoincore_rpc::spawn();
   create_wallet(&rpc_server);

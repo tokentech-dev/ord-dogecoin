@@ -31,12 +31,7 @@ mod tests {
         <h1>Sat 0</h1>
         <dl>
           <dt>decimal</dt><dd>0.0</dd>
-          <dt>degree</dt><dd>0°0′0″0‴</dd>
-          <dt>percentile</dt><dd>0%</dd>
-          <dt>name</dt><dd>nvtdijuwxlp</dd>
-          <dt>cycle</dt><dd>0</dd>
           <dt>epoch</dt><dd>0</dd>
-          <dt>period</dt><dd>0</dd>
           <dt>block</dt><dd><a href=/block/0>0</a></dd>
           <dt>offset</dt><dd>0</dd>
           <dt>rarity</dt><dd><span class=mythic>mythic</span></dd>
@@ -45,39 +40,6 @@ mod tests {
         .*
         prev
         <a class=next href=/sat/1>next</a>
-        .*
-      "
-      .unindent()
-    );
-  }
-
-  #[test]
-  fn last() {
-    assert_regex_match!(
-      SatHtml {
-        sat: Sat(2099999997689999),
-        satpoint: None,
-        blocktime: Blocktime::confirmed(0),
-        inscription: None,
-      },
-      "
-        <h1>Sat 2099999997689999</h1>
-        <dl>
-          <dt>decimal</dt><dd>6929999.0</dd>
-          <dt>degree</dt><dd>5°209999′1007″0‴</dd>
-          <dt>percentile</dt><dd>100%</dd>
-          <dt>name</dt><dd>a</dd>
-          <dt>cycle</dt><dd>5</dd>
-          <dt>epoch</dt><dd>32</dd>
-          <dt>period</dt><dd>3437</dd>
-          <dt>block</dt><dd><a href=/block/6929999>6929999</a></dd>
-          <dt>offset</dt><dd>0</dd>
-          <dt>rarity</dt><dd><span class=uncommon>uncommon</span></dd>
-          <dt>timestamp</dt><dd><time>1970-01-01 00:00:00 UTC</time></dd>
-        </dl>
-        .*
-        <a class=prev href=/sat/2099999997689998>prev</a>
-        next
         .*
       "
       .unindent()
@@ -106,20 +68,7 @@ mod tests {
         blocktime: Blocktime::confirmed(0),
         inscription: Some(inscription_id(1)),
       },
-      r"<h1>Sat 0</h1>.*<dt>inscription</dt><dd class=thumbnails><a href=/inscription/1{64}i1>.*</a></dd>.*",
-    );
-  }
-
-  #[test]
-  fn last_sat_next_link_is_disabled() {
-    assert_regex_match!(
-      SatHtml {
-        sat: Sat::LAST,
-        satpoint: None,
-        blocktime: Blocktime::confirmed(0),
-        inscription: None,
-      },
-      r"<h1>Sat 2099999997689999</h1>.*<a class=prev href=/sat/2099999997689998>prev</a>\nnext.*",
+      r"<h1>Sat 0</h1>.*<dt>inscription</dt><dd class=thumbnails><a href=/shibescription/1{64}i1>.*</a></dd>.*",
     );
   }
 

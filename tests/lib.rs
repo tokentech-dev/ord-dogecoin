@@ -80,7 +80,6 @@ mod list;
 mod parse;
 mod server;
 mod subsidy;
-mod supply;
 mod test_server;
 mod traits;
 mod version;

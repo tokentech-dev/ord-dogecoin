@@ -28,7 +28,7 @@ struct Output {
 
 #[derive(Debug, Parser)]
 pub(crate) struct Inscribe {
-  #[clap(long, help = "Inscribe <SATPOINT>")]
+  #[clap(long, help = "Shibescribe <SATPOINT>")]
   pub(crate) satpoint: Option<SatPoint>,
   #[clap(
     long,
@@ -41,7 +41,7 @@ pub(crate) struct Inscribe {
     help = "Use <COMMIT_FEE_RATE> sats/vbyte for commit transaction.\nDefaults to <FEE_RATE> if unset."
   )]
   pub(crate) commit_fee_rate: Option<FeeRate>,
-  #[clap(help = "Inscribe sat with contents of <FILE>")]
+  #[clap(help = "Shibescribe sat with contents of <FILE>")]
   pub(crate) file: PathBuf,
   #[clap(long, help = "Do not back up recovery key.")]
   pub(crate) no_backup: bool,
@@ -63,7 +63,7 @@ impl Inscribe {
     let index = Index::open(&options)?;
     index.update()?;
 
-    let client = options.bitcoin_rpc_client_for_wallet_command(false)?;
+    let client = options.dogecoin_rpc_client_for_wallet_command(false)?;
 
     let mut utxos = index.get_unspent_outputs(Wallet::load(&options)?)?;
 

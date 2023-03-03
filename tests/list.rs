@@ -4,7 +4,7 @@ use {super::*, ord::subcommand::list::Output};
 fn output_found() {
   let rpc_server = test_bitcoincore_rpc::spawn();
   let output = CommandBuilder::new(
-    "--index-sats list 4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b:0",
+    "--index-sats list 5b2a3f53f605d62c53e62932dac6925e3d74afa5a4b459745c36d42d0ed26a69:0",
   )
   .rpc_server(&rpc_server)
   .output::<Vec<Output>>();
@@ -12,13 +12,12 @@ fn output_found() {
   assert_eq!(
     output,
     vec![Output {
-      output: "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b:0"
+      output: "5b2a3f53f605d62c53e62932dac6925e3d74afa5a4b459745c36d42d0ed26a69:0"
         .parse()
         .unwrap(),
       start: 0,
-      size: 50 * COIN_VALUE,
+      size: 8800000000,
       rarity: "mythic".parse().unwrap(),
-      name: "nvtdijuwxlp".into(),
     }]
   );
 }
@@ -38,7 +37,7 @@ fn output_not_found() {
 #[test]
 fn no_satoshi_index() {
   let rpc_server = test_bitcoincore_rpc::spawn();
-  CommandBuilder::new("list 4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b:0")
+  CommandBuilder::new("list 1a91e3dace36e2be3bf030a65679fe821aa1d6ef92e7c9902eb318182c355691:0")
     .rpc_server(&rpc_server)
     .expected_stderr("error: list requires index created with `--index-sats` flag\n")
     .expected_exit_code(1)

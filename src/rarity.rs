@@ -29,25 +29,14 @@ impl Display for Rarity {
 
 impl From<Sat> for Rarity {
   fn from(sat: Sat) -> Self {
-    let Degree {
-      hour,
-      minute,
-      second,
-      third,
-    } = sat.degree();
-
-    if hour == 0 && minute == 0 && second == 0 && third == 0 {
-      Self::Mythic
-    } else if minute == 0 && second == 0 && third == 0 {
-      Self::Legendary
-    } else if minute == 0 && third == 0 {
-      Self::Epic
-    } else if second == 0 && third == 0 {
-      Self::Rare
-    } else if third == 0 {
-      Self::Uncommon
+    if sat.0 == 0 {
+      return Self::Mythic;
+    } else if sat == sat.epoch().starting_sat() {
+      return Self::Legendary;
+    } else if !sat.is_common() {
+      return Self::Uncommon;
     } else {
-      Self::Common
+      return Self::Common;
     }
   }
 }
@@ -94,40 +83,6 @@ mod tests {
   fn rarity() {
     assert_eq!(Sat(0).rarity(), Rarity::Mythic);
     assert_eq!(Sat(1).rarity(), Rarity::Common);
-
-    assert_eq!(Sat(50 * COIN_VALUE - 1).rarity(), Rarity::Common);
-    assert_eq!(Sat(50 * COIN_VALUE).rarity(), Rarity::Uncommon);
-    assert_eq!(Sat(50 * COIN_VALUE + 1).rarity(), Rarity::Common);
-
-    assert_eq!(
-      Sat(50 * COIN_VALUE * DIFFCHANGE_INTERVAL - 1).rarity(),
-      Rarity::Common
-    );
-    assert_eq!(
-      Sat(50 * COIN_VALUE * DIFFCHANGE_INTERVAL).rarity(),
-      Rarity::Rare
-    );
-    assert_eq!(
-      Sat(50 * COIN_VALUE * DIFFCHANGE_INTERVAL + 1).rarity(),
-      Rarity::Common
-    );
-
-    assert_eq!(
-      Sat(50 * COIN_VALUE * SUBSIDY_HALVING_INTERVAL - 1).rarity(),
-      Rarity::Common
-    );
-    assert_eq!(
-      Sat(50 * COIN_VALUE * SUBSIDY_HALVING_INTERVAL).rarity(),
-      Rarity::Epic
-    );
-    assert_eq!(
-      Sat(50 * COIN_VALUE * SUBSIDY_HALVING_INTERVAL + 1).rarity(),
-      Rarity::Common
-    );
-
-    assert_eq!(Sat(2067187500000000 - 1).rarity(), Rarity::Common);
-    assert_eq!(Sat(2067187500000000).rarity(), Rarity::Legendary);
-    assert_eq!(Sat(2067187500000000 + 1).rarity(), Rarity::Common);
   }
 
   #[test]

@@ -16,11 +16,8 @@ impl Height {
     let epoch = Epoch::from(self);
     let epoch_starting_sat = epoch.starting_sat();
     let epoch_starting_height = epoch.starting_height();
-    epoch_starting_sat + (self - epoch_starting_height.n()).n() * epoch.subsidy()
-  }
-
-  pub(crate) fn period_offset(self) -> u64 {
-    self.0 % DIFFCHANGE_INTERVAL
+    epoch_starting_sat
+      + ((self - epoch_starting_height.n()).n() as u128) * (epoch.subsidy() as u128)
   }
 }
 
@@ -82,41 +79,10 @@ mod tests {
 
   #[test]
   fn subsidy() {
-    assert_eq!(Height(0).subsidy(), 5000000000);
-    assert_eq!(Height(1).subsidy(), 5000000000);
-    assert_eq!(Height(SUBSIDY_HALVING_INTERVAL - 1).subsidy(), 5000000000);
-    assert_eq!(Height(SUBSIDY_HALVING_INTERVAL).subsidy(), 2500000000);
-    assert_eq!(Height(SUBSIDY_HALVING_INTERVAL + 1).subsidy(), 2500000000);
-  }
-
-  #[test]
-  fn starting_sat() {
-    assert_eq!(Height(0).starting_sat(), 0);
-    assert_eq!(Height(1).starting_sat(), 5000000000);
-    assert_eq!(
-      Height(SUBSIDY_HALVING_INTERVAL - 1).starting_sat(),
-      (SUBSIDY_HALVING_INTERVAL - 1) * 5000000000
-    );
-    assert_eq!(
-      Height(SUBSIDY_HALVING_INTERVAL).starting_sat(),
-      SUBSIDY_HALVING_INTERVAL * 5000000000
-    );
-    assert_eq!(
-      Height(SUBSIDY_HALVING_INTERVAL + 1).starting_sat(),
-      SUBSIDY_HALVING_INTERVAL * 5000000000 + 2500000000
-    );
-    assert_eq!(
-      Height(u64::max_value()).starting_sat(),
-      *Epoch::STARTING_SATS.last().unwrap()
-    );
-  }
-
-  #[test]
-  fn period_offset() {
-    assert_eq!(Height(0).period_offset(), 0);
-    assert_eq!(Height(1).period_offset(), 1);
-    assert_eq!(Height(DIFFCHANGE_INTERVAL - 1).period_offset(), 2015);
-    assert_eq!(Height(DIFFCHANGE_INTERVAL).period_offset(), 0);
-    assert_eq!(Height(DIFFCHANGE_INTERVAL + 1).period_offset(), 1);
+    assert_eq!(Height(0).subsidy(), 1_000_000 * COIN_VALUE);
+    assert_eq!(Height(1).subsidy(), 1_000_000 * COIN_VALUE);
+    assert_eq!(Height(100_000).subsidy(), 500_000 * COIN_VALUE);
+    assert_eq!(Height(199_999).subsidy(), 250_000 * COIN_VALUE);
+    assert_eq!(Height(201_000).subsidy(), 125_000 * COIN_VALUE);
   }
 }

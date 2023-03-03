@@ -16,7 +16,7 @@ fn json_with_satoshi_index() {
   "metadata_bytes": \d+,
   "outputs_traversed": 1,
   "page_size": \d+,
-  "sat_ranges": 1,
+  "sat_ranges": 2,
   "stored_bytes": \d+,
   "transactions": \[
     \{

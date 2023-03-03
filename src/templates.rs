@@ -2,7 +2,6 @@ use {super::*, boilerplate::Boilerplate};
 
 pub(crate) use {
   block::BlockHtml,
-  clock::ClockSvg,
   home::HomeHtml,
   iframe::Iframe,
   input::InputHtml,
@@ -21,7 +20,6 @@ pub(crate) use {
 };
 
 mod block;
-mod clock;
 mod home;
 mod iframe;
 mod input;
@@ -131,9 +129,8 @@ mod tests {
   <body>
   <header>
     <nav>
-      <a href=/>Ordinals<sup>alpha</sup></a>
+      <a href=/>Doginals<sup>alpha</sup></a>
       .*
-      <a href=/clock>Clock</a>
       <a href=/rare.txt>rare.txt</a>
       <form action=/search method=get>
         <input type=text .*>
@@ -160,7 +157,7 @@ mod tests {
         }),
         true
       ),
-      r".*<nav>\s*<a href=/>Ordinals<sup>alpha</sup></a>.*"
+      r".*<nav>\s*<a href=/>Doginals<sup>alpha</sup></a>.*"
     );
   }
 
@@ -174,7 +171,7 @@ mod tests {
         }),
         false
       ),
-      r".*<nav>\s*<a href=/>Ordinals<sup>alpha</sup></a>.*<a href=/clock>Clock</a>\s*<form action=/search.*",
+      r".*<nav>\s*<a href=/>Doginals<sup>alpha</sup></a>.*\s*<form action=/search.*",
     );
   }
 
@@ -188,7 +185,7 @@ mod tests {
         }),
         true
       ),
-      r".*<nav>\s*<a href=/>Ordinals<sup>signet</sup></a>.*"
+      r".*<nav>\s*<a href=/>Doginals<sup>signet</sup></a>.*"
     );
   }
 }

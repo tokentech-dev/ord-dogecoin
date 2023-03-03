@@ -23,7 +23,7 @@ pub trait Api {
   ) -> Result<Value, jsonrpc_core::Error>;
 
   #[rpc(name = "getblock")]
-  fn get_block(&self, blockhash: BlockHash, verbosity: u64) -> Result<String, jsonrpc_core::Error>;
+  fn get_block(&self, blockhash: BlockHash, verbose: bool) -> Result<String, jsonrpc_core::Error>;
 
   #[rpc(name = "getblockcount")]
   fn get_block_count(&self) -> Result<u64, jsonrpc_core::Error>;

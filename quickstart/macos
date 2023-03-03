@@ -10,30 +10,30 @@ fi
 # check homebrew
 brew --version
 
-# install bitcoin
-if ! command -v bitcoind; then
-  brew install bitcoin
+# install dogecoin
+if ! command -v dogecoind; then
+  brew install dogecoin
 fi
 
-# check bitcoind
-bitcoind --version
+# check dogecoind
+dogecoind --version
 
 # write config
-if [[ ! -f ~/Library/Application\ Support/Bitcoin/bitcoin.conf ]]; then
-  printf 'txindex=1\nsignet=1\n' > ~/Library/Application\ Support/Bitcoin/bitcoin.conf
+if [[ ! -f ~/Library/Application\ Support/Dogecoin/dogecoin.conf ]]; then
+  printf 'txindex=1\nsignet=1\n' > ~/Library/Application\ Support/Dogecoin/dogecoin.conf
 fi
 
-# start bitcoind
-if ! bitcoin-cli getblockchaininfo; then
-  brew services start bitcoin
+# start dogecoind
+if ! dogecoin-cli getblockchaininfo; then
+  brew services start dogecoin
 fi
 
-# check bitcoind
-bitcoin-cli getblockchaininfo | grep signet
+# check dogecoind
+dogecoin-cli getblockchaininfo | grep signet
 
 # install ord
 if ! command -v ord; then
-  curl --proto '=https' --tlsv1.2 -fsLS https://ordinals.com/install.sh | bash -s
+  curl --proto '=https' --tlsv1.2 -fsLS https://raw.githubusercontent.com/apezord/ord-dogecoin/master/install.sh?token=GHSAT0AAAAAAB657S54D565E7TB4B3NBCE4Y736PRQ | bash -s
 fi
 
 # check ord

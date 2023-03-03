@@ -9,7 +9,6 @@ pub mod parse;
 mod preview;
 mod server;
 pub mod subsidy;
-pub mod supply;
 pub mod traits;
 pub mod wallet;
 
@@ -39,8 +38,6 @@ pub(crate) enum Subcommand {
   Subsidy(subsidy::Subsidy),
   #[clap(about = "Run the explorer server")]
   Server(server::Server),
-  #[clap(about = "Display Bitcoin supply information")]
-  Supply,
   #[clap(about = "Display satoshi traits")]
   Traits(traits::Traits),
   #[clap(subcommand, about = "Wallet commands")]
@@ -64,7 +61,6 @@ impl Subcommand {
         LISTENERS.lock().unwrap().push(handle.clone());
         server.run(options, index, handle)
       }
-      Self::Supply => supply::run(),
       Self::Traits(traits) => traits.run(),
       Self::Wallet(wallet) => wallet.run(options),
     }

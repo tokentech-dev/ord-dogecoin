@@ -8,9 +8,8 @@ pub(crate) struct Subsidy {
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct Output {
-  pub first: u64,
+  pub first: u128,
   pub subsidy: u64,
-  pub name: String,
 }
 
 impl Subsidy {
@@ -26,7 +25,6 @@ impl Subsidy {
     print_json(Output {
       first: first.0,
       subsidy,
-      name: first.name(),
     })?;
 
     Ok(())
