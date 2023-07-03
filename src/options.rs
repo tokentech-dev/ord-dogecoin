@@ -22,6 +22,10 @@ pub(crate) struct Options {
   pub(crate) config_dir: Option<PathBuf>,
   #[clap(long, help = "Load Dogecoin Core RPC cookie file from <COOKIE_FILE>.")]
   pub(crate) cookie_file: Option<PathBuf>,
+  #[clap(long, help = "Dogecoin Core RPC username")]
+  pub(crate) rpc_username: Option<String>,
+  #[clap(long, help = "Dogecoin Core RPC password")]
+  pub(crate) rpc_password: Option<String>,
   #[clap(long, help = "Store index in <DATA_DIR>.")]
   pub(crate) data_dir: Option<PathBuf>,
   #[clap(
