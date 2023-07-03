@@ -150,7 +150,7 @@ impl Index {
     let auth = if options.rpc_password.is_some() && options.rpc_username.is_some() {
       Auth::UserPass(options.rpc_username.unwrap(), options.rpc_password.unwrap())
     } else {
-      Auth::CookieFile(cookie_file);
+      Auth::CookieFile(cookie_file)
     };
 
     let client = Client::new(&rpc_url, auth.clone()).context("failed to connect to RPC URL")?;
