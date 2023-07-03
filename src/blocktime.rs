@@ -1,6 +1,7 @@
 use super::*;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize, Deserialize)]
+#[serde(tag = "type")]
 pub(crate) enum Blocktime {
   Confirmed(DateTime<Utc>),
   Expected(DateTime<Utc>),

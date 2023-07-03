@@ -9,8 +9,8 @@ use {
 
 const PROTOCOL_ID: &[u8] = b"ord";
 
-#[derive(Debug, PartialEq, Clone)]
-pub(crate) struct Inscription {
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
+pub struct Inscription {
   body: Option<Vec<u8>>,
   content_type: Option<Vec<u8>>,
 }

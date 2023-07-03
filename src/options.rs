@@ -11,7 +11,6 @@ pub(crate) struct Options {
   pub(crate) dogecoin_data_dir: Option<PathBuf>,
   #[clap(
     long = "chain",
-    arg_enum,
     default_value = "mainnet",
     help = "Use <CHAIN>."
   )]
