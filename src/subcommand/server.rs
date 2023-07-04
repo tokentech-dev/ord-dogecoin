@@ -1,4 +1,5 @@
-use axum::Json;
+use axum::{extract, Json};
+use axum::routing::post;
 use {
     self::{
         deserialize_from_str::DeserializeFromStr,
@@ -155,6 +156,7 @@ impl Server {
                 .route("/api/sat/:sat", get(Self::api_sat))
                 .route("/api/search/:query", get(Self::api_search))
                 .route("/api/tx/:txid", get(Self::api_transaction))
+                .route("/api/batch/tx", post(Self::batch_api_transaction))
                 .layer(Extension(index))
                 .layer(Extension(page_config))
                 .layer(Extension(Arc::new(config)))
@@ -466,6 +468,11 @@ pub struct ApiTransactionResponse {
     pub inscription: Option<Inscription>,
 }
 
+#[derive(Deserialize)]
+pub struct ApiBatchTransactionRequest {
+    pub txids: Vec<Txid>,
+}
+
 impl Server {
     async fn api_transaction(
         Extension(index): Extension<Arc<Index>>,
@@ -482,18 +489,22 @@ impl Server {
         }))
     }
 
-    async fn status(Extension(index): Extension<Arc<Index>>) -> (StatusCode, &'static str) {
-        if index.is_reorged() {
-            (
-                StatusCode::OK,
-                "reorg detected, please rebuild the database.",
-            )
-        } else {
-            (
-                StatusCode::OK,
-                StatusCode::OK.canonical_reason().unwrap_or_default(),
-            )
+    async fn batch_api_transaction(
+        Extension(index): Extension<Arc<Index>>,
+        Json(body): Json<ApiBatchTransactionRequest>,
+    ) -> ServerResult<Json<Vec<ApiTransactionResponse>>> {
+        let mut txs = Vec::new();
+        for txid in body.txids {
+            let inscription = index.get_inscription_by_id(txid.into())?;
+            let block_hash = index.get_transaction_blockhash(txid)?;
+            txs.push(ApiTransactionResponse {
+                transaction: index.get_transaction(txid)?.ok_or_not_found(|| format!("transaction {txid}"))?,
+                block_hash,
+                inscription,
+            });
         }
+
+        Ok(Json(txs))
     }
 }
 
